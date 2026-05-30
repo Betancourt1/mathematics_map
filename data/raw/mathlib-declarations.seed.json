@@ -1,0 +1,129 @@
+{
+  "project": "mathlib",
+  "source": {
+    "kind": "seed",
+    "description": "Dataset semilla para el arranque del explorador.",
+    "url": "https://leanprover-community.github.io/mathlib4_docs/"
+  },
+  "declarations": [
+    {
+      "id": "group",
+      "name": "Mathlib.Algebra.Group.Defs.Group",
+      "label": "Group",
+      "module": "Mathlib/Algebra/Group/Defs",
+      "category": "algebra",
+      "doc": "Estructura base para operaciones asociativas con identidad e inversos.",
+      "references": [
+        "Mathlib.Algebra.Ring.Defs.Ring",
+        "Mathlib.Algebra.Group.Hom.Defs.MonoidHom"
+      ]
+    },
+    {
+      "id": "ring",
+      "name": "Mathlib.Algebra.Ring.Defs.Ring",
+      "label": "Ring",
+      "module": "Mathlib/Algebra/Ring/Defs",
+      "category": "algebra",
+      "doc": "Objeto central para algebra abstracta con suma y multiplicacion.",
+      "references": [
+        "Mathlib.RingTheory.Ideal.Basic.Ideal",
+        "Mathlib.Analysis.Normed.Field.Basic.NormedRing"
+      ]
+    },
+    {
+      "id": "ideal",
+      "name": "Mathlib.RingTheory.Ideal.Basic.Ideal",
+      "label": "Ideal",
+      "module": "Mathlib/RingTheory/Ideal/Basic",
+      "category": "algebra",
+      "doc": "Subestructura que organiza cocientes y localizacion en teoria de anillos.",
+      "references": [
+        "Mathlib.AlgebraicGeometry.Scheme",
+        "Mathlib.Algebra.Ring.Defs.Ring"
+      ]
+    },
+    {
+      "id": "normed_ring",
+      "name": "Mathlib.Analysis.Normed.Field.Basic.NormedRing",
+      "label": "NormedRing",
+      "module": "Mathlib/Analysis/Normed/Field/Basic",
+      "category": "analysis",
+      "doc": "Une la estructura algebraica de un anillo con control metrico via una norma.",
+      "references": [
+        "Mathlib.Topology.MetricSpace.Basic.MetricSpace",
+        "Mathlib.Analysis.NormedSpace.OperatorNorm.ContinuousLinearMap"
+      ]
+    },
+    {
+      "id": "metric_space",
+      "name": "Mathlib.Topology.MetricSpace.Basic.MetricSpace",
+      "label": "MetricSpace",
+      "module": "Mathlib/Topology/MetricSpace/Basic",
+      "category": "topology",
+      "doc": "Base para convergencia, continuidad y compacidad con distancias explicitas.",
+      "references": [
+        "Mathlib.Topology.Basic.TopologicalSpace",
+        "Mathlib.Topology.Compactness.Compact.CompactSpace"
+      ]
+    },
+    {
+      "id": "topological_space",
+      "name": "Mathlib.Topology.Basic.TopologicalSpace",
+      "label": "TopologicalSpace",
+      "module": "Mathlib/Topology/Basic",
+      "category": "topology",
+      "doc": "Capa abstracta para abrir el mapa hacia continuidad, limites y haces.",
+      "references": [
+        "Mathlib.Topology.Compactness.Compact.CompactSpace",
+        "Mathlib.AlgebraicGeometry.Scheme"
+      ]
+    },
+    {
+      "id": "compact_space",
+      "name": "Mathlib.Topology.Compactness.Compact.CompactSpace",
+      "label": "CompactSpace",
+      "module": "Mathlib/Topology/Compactness/Compact",
+      "category": "topology",
+      "doc": "Propiedad recurrente en analisis, geometria y teoria de categorias.",
+      "references": [
+        "Mathlib.Topology.Basic.TopologicalSpace"
+      ]
+    },
+    {
+      "id": "monoid_hom",
+      "name": "Mathlib.Algebra.Group.Hom.Defs.MonoidHom",
+      "label": "MonoidHom",
+      "module": "Mathlib/Algebra/Group/Hom/Defs",
+      "category": "logic",
+      "doc": "Morfismos estructurados que conectan definiciones algebraicas a traves del mapa.",
+      "references": [
+        "Mathlib.Algebra.Group.Defs.Group",
+        "Mathlib.Analysis.NormedSpace.OperatorNorm.ContinuousLinearMap"
+      ]
+    },
+    {
+      "id": "continuous_linear_map",
+      "name": "Mathlib.Analysis.NormedSpace.OperatorNorm.ContinuousLinearMap",
+      "label": "ContinuousLinearMap",
+      "module": "Mathlib/Analysis/NormedSpace/OperatorNorm",
+      "category": "analysis",
+      "doc": "Punto de encuentro entre algebra lineal, topologia y analisis funcional.",
+      "references": [
+        "Mathlib.Analysis.Normed.Field.Basic.NormedRing",
+        "Mathlib.Topology.MetricSpace.Basic.MetricSpace"
+      ]
+    },
+    {
+      "id": "scheme",
+      "name": "Mathlib.AlgebraicGeometry.Scheme",
+      "label": "Scheme",
+      "module": "Mathlib/AlgebraicGeometry/Scheme",
+      "category": "geometry",
+      "doc": "Nodo de ejemplo para geometria algebraica y navegacion por dependencias profundas.",
+      "references": [
+        "Mathlib.RingTheory.Ideal.Basic.Ideal",
+        "Mathlib.Topology.Basic.TopologicalSpace"
+      ]
+    }
+  ]
+}

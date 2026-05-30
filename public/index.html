@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mathematical Dependency Interface</title>
+    <link rel="icon" href="data:," />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <canvas id="graph-canvas" aria-label="3D Lean dependency graph"></canvas>
+
+      <section class="hud top-bar" aria-label="Search and view mode">
+        <label class="sr-only" for="search-input">Declaration</label>
+        <input id="search-input" list="declaration-options" type="search" autocomplete="off" placeholder="Search declaration or module" />
+        <datalist id="declaration-options"></datalist>
+
+        <div class="mode-tabs" role="group" aria-label="View mode">
+          <button class="mode-button is-active" type="button" data-mode="overview" aria-pressed="true">Overview</button>
+          <button class="mode-button" type="button" data-mode="selected" aria-pressed="false">Selected</button>
+          <button class="mode-button" type="button" data-mode="path" aria-pressed="false">Path</button>
+          <button class="mode-button" type="button" data-mode="neighborhood" aria-pressed="false">Local</button>
+        </div>
+
+        <div class="camera-tools" role="group" aria-label="Camera controls">
+          <button class="camera-button is-active" type="button" data-camera-mode="rotate" aria-pressed="true">Rotate</button>
+          <button class="camera-button" type="button" data-camera-mode="move" aria-pressed="false">Move</button>
+        </div>
+
+        <details class="download-tools">
+          <summary aria-label="Download graph data">
+            <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" />
+            </svg>
+          </summary>
+          <div class="download-menu-panel" aria-label="Download formats">
+            <a class="download-option" href="./data/mathlib-map.gexf" download>
+              <span>GEXF</span>
+              <small>204 MB</small>
+            </a>
+            <a class="download-option" href="./data/mathlib-map.csv" download>
+              <span>CSV</span>
+              <small>54 MB</small>
+            </a>
+          </div>
+        </details>
+
+        <dl class="top-metrics" aria-label="Graph state">
+          <div>
+            <dt>Visible</dt>
+            <dd id="metric-visible">0</dd>
+          </div>
+          <div>
+            <dt>Edges</dt>
+            <dd id="metric-edges">0</dd>
+          </div>
+          <div>
+            <dt>Depth</dt>
+            <dd id="metric-depth">2</dd>
+          </div>
+          <div>
+            <dt>Mode</dt>
+            <dd id="metric-mode">Overview</dd>
+          </div>
+        </dl>
+      </section>
+
+      <details class="hud panel filter-drawer">
+        <summary>Filters</summary>
+        <div class="filter-group">
+          <div class="field-label">Declaration type</div>
+          <div id="kind-filters" class="chip-grid"></div>
+        </div>
+        <div class="filter-group">
+          <div class="field-label">Area</div>
+          <div id="category-filters" class="chip-grid"></div>
+        </div>
+      </details>
+
+      <aside id="node-inspector" class="hud panel node-inspector" aria-label="Node inspector">
+        <button id="toggle-inspector" class="rail-toggle" type="button" aria-label="Toggle inspector" aria-expanded="false">Detail</button>
+        <div class="inspector-content" aria-hidden="true" inert>
+          <div class="panel-title">Node inspector</div>
+          <div class="node-heading">
+            <span id="selected-kind" class="type-tag">NODE</span>
+            <h1 id="selected-label">No selection</h1>
+          </div>
+          <p id="selected-name" class="long-name">Search or select an anchor node.</p>
+          <dl class="detail-grid">
+            <div>
+              <dt>Module</dt>
+              <dd id="selected-module">-</dd>
+            </div>
+            <div>
+              <dt>Area</dt>
+              <dd id="selected-category">-</dd>
+            </div>
+            <div>
+              <dt id="selected-out-label">Depends on</dt>
+              <dd id="selected-out">0</dd>
+            </div>
+            <div>
+              <dt id="selected-in-label">Used by</dt>
+              <dd id="selected-in">0</dd>
+            </div>
+          </dl>
+          <pre id="lean-preview" class="lean-preview">def loading ... :=</pre>
+          <div class="inspector-actions">
+            <button id="center-node" type="button">Center</button>
+            <button id="isolate-node" type="button">Overview</button>
+            <button id="expand-node" type="button">Expand</button>
+            <a id="open-docs" href="https://leanprover-community.github.io/mathlib4_docs/" target="_blank" rel="noreferrer">Docs</a>
+          </div>
+        </div>
+      </aside>
+
+      <section id="neighbor-drawer" class="hud panel neighbor-drawer" aria-label="Visible nodes" aria-hidden="true" inert>
+        <div
+          id="neighbor-resize-handle"
+          class="neighbor-resize-handle"
+          role="separator"
+          aria-orientation="horizontal"
+          aria-label="Resize local neighbors"
+          tabindex="0"
+        ></div>
+        <div class="bottom-controls">
+          <div>
+            <div id="neighbor-title" class="panel-title">Visible nodes</div>
+            <div id="path-summary" class="path-summary">Search or click an anchor to open a local dependency view.</div>
+          </div>
+          <div class="bottom-tools">
+            <label class="depth-control" for="depth-slider">
+              <span>Depth</span>
+              <input id="depth-slider" type="range" min="1" max="4" value="2" />
+              <strong id="depth-value">2</strong>
+            </label>
+            <button id="toggle-neighbors" class="drawer-action" type="button" aria-label="Hide local neighbors">Hide</button>
+          </div>
+        </div>
+        <div class="neighbors-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Rel</th>
+                <th>Type</th>
+                <th>Declaration</th>
+                <th>Module</th>
+              </tr>
+            </thead>
+            <tbody id="neighbors-body"></tbody>
+          </table>
+        </div>
+        <div class="neighbor-footer">
+          <span id="neighbor-count" aria-live="polite"></span>
+          <button id="show-more-neighbors" class="drawer-action" type="button">Show more</button>
+        </div>
+      </section>
+
+      <button id="restore-neighbors" class="hud panel neighbor-restore" type="button" aria-label="Show visible nodes">
+        Visible nodes
+      </button>
+
+      <div id="tooltip" class="tooltip" role="status"></div>
+      <div id="status-live" class="sr-only" aria-live="polite"></div>
+      <div id="labels-layer" class="labels-layer" aria-hidden="true"></div>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
