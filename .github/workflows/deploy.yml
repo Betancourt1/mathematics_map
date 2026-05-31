@@ -31,8 +31,9 @@ jobs:
 
       - name: Generate mathematical dataset
         run: |
-          node scripts/fetch-mathlib-docgen4-map.mjs
+          node scripts/build-mathlib-docgen4-graph.mjs
           node scripts/build-public-3d-map.mjs
+          node scripts/export-public-graph-downloads.mjs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
